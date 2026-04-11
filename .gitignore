@@ -6,6 +6,6 @@ __pycache__/
 *.egg-info/
 config/oauth_client.json
 config/token.json
-logs/
-snapshots/
+/logs/
+/snapshots/
 uv.lock
