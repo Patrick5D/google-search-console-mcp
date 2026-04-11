@@ -1,8 +1,10 @@
 pyproject.toml
 src/google_search_console_mcp/__init__.py
+src/google_search_console_mcp/audit.py
 src/google_search_console_mcp/auth.py
 src/google_search_console_mcp/config.py
 src/google_search_console_mcp/errors.py
+src/google_search_console_mcp/server.py
 src/google_search_console_mcp.egg-info/PKG-INFO
 src/google_search_console_mcp.egg-info/SOURCES.txt
 src/google_search_console_mcp.egg-info/dependency_links.txt
@@ -14,7 +16,16 @@ src/google_search_console_mcp/gsc/inspection.py
 src/google_search_console_mcp/gsc/performance.py
 src/google_search_console_mcp/gsc/sitemaps.py
 src/google_search_console_mcp/gsc/sites.py
+src/google_search_console_mcp/snapshots/__init__.py
+src/google_search_console_mcp/snapshots/csv_writer.py
+src/google_search_console_mcp/tools/__init__.py
+src/google_search_console_mcp/tools/read_tools.py
+src/google_search_console_mcp/tools/snapshot_tools.py
+tests/test_audit.py
 tests/test_auth.py
 tests/test_bootstrap.py
 tests/test_config.py
 tests/test_gsc_client.py
+tests/test_server.py
+tests/test_snapshot_csv.py
+tests/test_tools.py

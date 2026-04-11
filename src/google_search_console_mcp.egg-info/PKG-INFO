@@ -6,7 +6,9 @@ Requires-Python: >=3.12
 Requires-Dist: google-api-python-client>=2.169.0
 Requires-Dist: google-auth>=2.40.0
 Requires-Dist: google-auth-oauthlib>=1.2.2
+Requires-Dist: mcp>=1.24.0
 Requires-Dist: pydantic>=2.11.0
+Requires-Dist: python-dotenv>=1.1.0
 Requires-Dist: PyYAML>=6.0.2
 Provides-Extra: dev
 Requires-Dist: pytest>=8.4.0; extra == "dev"
