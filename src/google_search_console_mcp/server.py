@@ -28,8 +28,8 @@ def create_server(*, settings: Settings) -> FastMCP:
     )
 
     audit_logger = AuditLogger(settings.paths.audit_log_path)
-    read_service = ReadToolService(settings=settings)
-    snapshot_service = SnapshotToolService(settings=settings, read_service=read_service)
+    read_service = ReadToolService(settings=settings, audit_logger=audit_logger)
+    snapshot_service = SnapshotToolService(settings=settings, read_service=read_service, audit_logger=audit_logger)
 
     register_read_tools(mcp, read_service=read_service)
     register_snapshot_tools(mcp, snapshot_service=snapshot_service)

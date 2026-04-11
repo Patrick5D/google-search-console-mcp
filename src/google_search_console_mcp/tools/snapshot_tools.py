@@ -8,8 +8,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
 
+from ..audit import AuditLogger
 from ..config import Settings
+from ..errors import SnapshotError
 from ..snapshots.csv_writer import (
     list_snapshot_files,
     read_snapshot_rows,
@@ -22,42 +26,86 @@ from .read_tools import ReadToolService
 class SnapshotToolService:
     settings: Settings
     read_service: ReadToolService
+    audit_logger: AuditLogger | None = None
+
+    def _audit(self, *, tool_name: str, status: str, args_summary: dict[str, object], error_type: str | None = None):
+        if self.audit_logger is None:
+            return
+        record: dict[str, object] = {
+            "tool_name": tool_name,
+            "status": status,
+            "args_summary": args_summary,
+        }
+        if error_type is not None:
+            record["error_type"] = error_type
+        self.audit_logger.log(record)
+
+    def _assert_snapshot_path_is_within_root(self, snapshot_path: str | Path) -> Path:
+        root = Path(self.settings.paths.snapshot_root).resolve()
+        path = Path(snapshot_path).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError as exc:
+            raise SnapshotError(f"snapshot path outside snapshot root: {path}") from exc
+        return path
 
     def snapshot_site_day(self, *, property_uri: str, date: str, search_type: str = "web"):
-        rows = self.read_service.get_site_daily_summary(
-            property_uri=property_uri,
-            start_date=date,
-            end_date=date,
-            search_type=search_type,
-        )
-        row = rows[0] if rows else {}
-        payload = {
-            "snapshot_date": date,
-            "property_uri": property_uri,
-            "search_type": search_type,
-            "data_state": "",
-            "clicks": row.get("clicks", 0),
-            "impressions": row.get("impressions", 0),
-            "ctr": row.get("ctr", 0.0),
-            "average_position": row.get("average_position", 0.0),
-            "api_start_date": date,
-            "api_end_date": date,
-            "captured_at_utc": "",
-        }
-        return str(
-            write_site_day_snapshot(
+        args_summary = {"property_uri": property_uri, "date": date, "search_type": search_type}
+        try:
+            rows = self.read_service.get_site_daily_summary(
+                property_uri=property_uri,
+                start_date=date,
+                end_date=date,
+                search_type=search_type,
+            )
+            if not rows:
+                raise SnapshotError(f"no site-day data returned for {property_uri} on {date}")
+            row = rows[0]
+            payload = {
+                "snapshot_date": date,
+                "property_uri": property_uri,
+                "search_type": search_type,
+                "data_state": "final",
+                "clicks": row.get("clicks", 0),
+                "impressions": row.get("impressions", 0),
+                "ctr": row.get("ctr", 0.0),
+                "average_position": row.get("average_position", 0.0),
+                "api_start_date": date,
+                "api_end_date": date,
+                "captured_at_utc": datetime.now(timezone.utc).isoformat(),
+            }
+            path = write_site_day_snapshot(
                 snapshot_root=self.settings.paths.snapshot_root,
                 property_uri=property_uri,
                 date=date,
                 row=payload,
             )
-        )
+        except Exception as exc:
+            self._audit(tool_name="snapshot_site_day", status="error", args_summary=args_summary, error_type=type(exc).__name__)
+            raise
+        self._audit(tool_name="snapshot_site_day", status="ok", args_summary={**args_summary, "snapshot_path": str(path)})
+        return str(path)
 
     def list_snapshots(self, property_uri: str | None = None):
-        return [str(path) for path in list_snapshot_files(self.settings.paths.snapshot_root, property_uri)]
+        args_summary = {"property_uri": property_uri}
+        try:
+            result = [str(path) for path in list_snapshot_files(self.settings.paths.snapshot_root, property_uri)]
+        except Exception as exc:
+            self._audit(tool_name="list_snapshots", status="error", args_summary=args_summary, error_type=type(exc).__name__)
+            raise
+        self._audit(tool_name="list_snapshots", status="ok", args_summary=args_summary)
+        return result
 
     def read_snapshot(self, snapshot_path: str):
-        return read_snapshot_rows(snapshot_path)
+        args_summary = {"snapshot_path": snapshot_path}
+        try:
+            safe_path = self._assert_snapshot_path_is_within_root(snapshot_path)
+            result = read_snapshot_rows(safe_path)
+        except Exception as exc:
+            self._audit(tool_name="read_snapshot", status="error", args_summary=args_summary, error_type=type(exc).__name__)
+            raise
+        self._audit(tool_name="read_snapshot", status="ok", args_summary=args_summary)
+        return result
 
 
 def register_snapshot_tools(mcp, *, snapshot_service: SnapshotToolService):

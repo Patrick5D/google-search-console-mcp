@@ -8,8 +8,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 from typing import Callable
 
+from ..audit import AuditLogger
 from ..auth import get_auth_status
 from ..config import Settings
 from ..gsc.client import build_search_console_service
@@ -36,12 +38,38 @@ def build_read_tool_names() -> list[str]:
 class ReadToolService:
     settings: Settings
     service_factory: Callable[..., object] = build_search_console_service
+    audit_logger: AuditLogger | None = None
+
+    def _audit(self, *, tool_name: str, status: str, args_summary: dict[str, object], error_type: str | None = None):
+        if self.audit_logger is None:
+            return
+        record: dict[str, object] = {
+            "tool_name": tool_name,
+            "status": status,
+            "args_summary": args_summary,
+        }
+        if error_type is not None:
+            record["error_type"] = error_type
+        self.audit_logger.log(record)
+
+    def _run(self, tool_name: str, args_summary: dict[str, object], fn: Callable[[], Any]):
+        try:
+            result = fn()
+        except Exception as exc:
+            self._audit(tool_name=tool_name, status="error", args_summary=args_summary, error_type=type(exc).__name__)
+            raise
+        self._audit(tool_name=tool_name, status="ok", args_summary=args_summary)
+        return result
 
     def get_account_status(self):
-        return get_auth_status(
-            client_path=self.settings.paths.oauth_client_path,
-            token_path=self.settings.paths.token_path,
-        ).model_dump()
+        return self._run(
+            "get_account_status",
+            {},
+            lambda: get_auth_status(
+                client_path=self.settings.paths.oauth_client_path,
+                token_path=self.settings.paths.token_path,
+            ).model_dump(),
+        )
 
     def _service(self):
         return self.service_factory(
@@ -50,25 +78,25 @@ class ReadToolService:
         )
 
     def list_properties(self):
-        return list_properties(self._service())
+        return self._run("list_properties", {}, lambda: list_properties(self._service()))
 
     def get_property(self, property_uri: str):
-        return get_property(self._service(), property_uri)
+        return self._run("get_property", {"property_uri": property_uri}, lambda: get_property(self._service(), property_uri))
 
     def query_search_analytics(self, **kwargs):
-        return query_search_analytics(self._service(), **kwargs)
+        return self._run("query_search_analytics", kwargs, lambda: query_search_analytics(self._service(), **kwargs))
 
     def get_site_daily_summary(self, **kwargs):
-        return get_site_daily_summary(self._service(), **kwargs)
+        return self._run("get_site_daily_summary", kwargs, lambda: get_site_daily_summary(self._service(), **kwargs))
 
     def inspect_url(self, **kwargs):
-        return inspect_url(self._service(), **kwargs)
+        return self._run("inspect_url", kwargs, lambda: inspect_url(self._service(), **kwargs))
 
     def list_sitemaps(self, **kwargs):
-        return list_sitemaps(self._service(), **kwargs)
+        return self._run("list_sitemaps", kwargs, lambda: list_sitemaps(self._service(), **kwargs))
 
     def get_sitemap(self, **kwargs):
-        return get_sitemap(self._service(), **kwargs)
+        return self._run("get_sitemap", kwargs, lambda: get_sitemap(self._service(), **kwargs))
 
 
 def register_read_tools(mcp, *, read_service: ReadToolService):

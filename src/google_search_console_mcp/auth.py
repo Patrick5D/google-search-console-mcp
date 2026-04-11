@@ -29,10 +29,11 @@ class AuthStatus(BaseModel):
 def get_auth_status(*, client_path: str | Path, token_path: str | Path) -> AuthStatus:
     client_file = Path(client_path)
     token_file = Path(token_path)
+    ready = client_file.exists() and _token_payload_is_usable(token_file)
     return AuthStatus(
         client_config_exists=client_file.exists(),
         token_exists=token_file.exists(),
-        ready=client_file.exists() and token_file.exists(),
+        ready=ready,
     )
 
 
@@ -64,6 +65,17 @@ def load_user_credentials(
     if not credentials.valid:
         raise AuthError("OAuth credentials are not valid; run auth login")
     return credentials
+
+
+def _token_payload_is_usable(token_path: Path) -> bool:
+    if not token_path.exists():
+        return False
+    try:
+        payload = load_token_payload(token_path)
+        credentials = Credentials.from_authorized_user_info(payload, scopes=GSC_SCOPES)
+    except (AuthError, ValueError, TypeError):
+        return False
+    return bool(credentials.valid or credentials.refresh_token)
 
 
 def run_oauth_login(
