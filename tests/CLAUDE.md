@@ -11,5 +11,6 @@ test_snapshot_csv.py: 快照层测试，约束 property URI 到 CSV 路径的规
 test_audit.py: 审计层测试，验证 JSONL 记录能稳定落盘
 test_tools.py: 工具层测试，约束暴露的只读工具名集合不漂移
 test_server.py: server 层测试，验证 FastMCP 入口能被正确组装
+test_cli.py: CLI 层测试，验证 auth 子命令结构与解析行为
 
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
