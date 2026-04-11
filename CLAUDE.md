@@ -10,7 +10,7 @@ docs/ - 设计与计划文档目录，沉淀系统地图与实现路线 (1子目
 </directory>
 
 <directory>
-src/ - Python 源码目录，承载 MCP server、GSC API 封装与快照逻辑 (0子目录)
+src/ - Python 源码目录，承载 MCP server、GSC API 封装与快照逻辑 (1子目录: google_search_console_mcp)
 </directory>
 
 <directory>

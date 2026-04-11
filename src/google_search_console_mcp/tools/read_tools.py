@@ -35,7 +35,7 @@ def build_read_tool_names() -> list[str]:
 @dataclass
 class ReadToolService:
     settings: Settings
-    service_factory: Callable[[str], object] = build_search_console_service
+    service_factory: Callable[..., object] = build_search_console_service
 
     def get_account_status(self):
         return get_auth_status(
@@ -44,7 +44,10 @@ class ReadToolService:
         ).model_dump()
 
     def _service(self):
-        return self.service_factory(self.settings.paths.token_path)
+        return self.service_factory(
+            token_path=self.settings.paths.token_path,
+            client_path=self.settings.paths.oauth_client_path,
+        )
 
     def list_properties(self):
         return list_properties(self._service())
