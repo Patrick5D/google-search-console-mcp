@@ -8,5 +8,6 @@ test_config.py: 配置层测试，验证 server 与 paths YAML 能被合并为 S
 test_auth.py: 认证层测试，约束 OAuth 配置存在但 token 缺失时的状态表达
 test_gsc_client.py: GSC 包装层测试，约束 Search Analytics 行归一化输出
 test_snapshot_csv.py: 快照层测试，约束 property URI 到 CSV 路径的规范化规则
+test_audit.py: 审计层测试，验证 JSONL 记录能稳定落盘
 
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
