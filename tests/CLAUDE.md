@@ -6,5 +6,6 @@ CLAUDE.md: 测试目录地图，约束配置、认证、工具与快照测试的
 test_bootstrap.py: 启动骨架测试，验证项目最小元数据文件是否已建立
 test_config.py: 配置层测试，验证 server 与 paths YAML 能被合并为 Settings
 test_auth.py: 认证层测试，约束 OAuth 配置存在但 token 缺失时的状态表达
+test_gsc_client.py: GSC 包装层测试，约束 Search Analytics 行归一化输出
 
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

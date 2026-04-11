@@ -3,6 +3,9 @@ Name: google-search-console-mcp
 Version: 0.1.0
 Summary: A local-first Google Search Console MCP execution layer.
 Requires-Python: >=3.12
+Requires-Dist: google-api-python-client>=2.169.0
+Requires-Dist: google-auth>=2.40.0
+Requires-Dist: google-auth-oauthlib>=1.2.2
 Requires-Dist: pydantic>=2.11.0
 Requires-Dist: PyYAML>=6.0.2
 Provides-Extra: dev
