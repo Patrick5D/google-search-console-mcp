@@ -21,4 +21,16 @@ tests/ - pytest 测试目录，验证配置、认证、工具注册与 CSV 快�
 CLAUDE.md - 项目 L1 宪法，定义目录骨架、技术栈与模块边界
 </config>
 
+<config>
+.gitignore - 本地环境、凭据、缓存与快照忽略规则，保持仓库输出干净
+</config>
+
+<config>
+.env.example - 本地环境变量模板，声明 OAuth 与配置路径入口
+</config>
+
+<config>
+pyproject.toml - Python 项目元数据与依赖定义，提供 uv/pytest 运行基础
+</config>
+
 法则: 极简·稳定·导航·版本精确

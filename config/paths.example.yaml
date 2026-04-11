@@ -1,0 +1,5 @@
+paths:
+  oauth_client_path: ./config/oauth_client.json
+  token_path: ./config/token.json
+  audit_log_path: ./logs/audit.jsonl
+  snapshot_root: ./snapshots

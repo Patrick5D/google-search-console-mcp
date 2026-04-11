@@ -1,0 +1,4 @@
+server:
+  host: 127.0.0.1
+  port: 8765
+  agent_header_name: x-agent-id

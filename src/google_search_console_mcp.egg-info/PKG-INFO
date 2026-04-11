@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: google-search-console-mcp
+Version: 0.1.0
+Summary: A local-first Google Search Console MCP execution layer.
+Requires-Python: >=3.12
+Provides-Extra: dev
+Requires-Dist: pytest>=8.4.0; extra == "dev"

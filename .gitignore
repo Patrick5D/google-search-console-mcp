@@ -1,0 +1,10 @@
+.env
+.venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+config/oauth_client.json
+config/token.json
+logs/
+snapshots/
+uv.lock
