@@ -3,7 +3,10 @@ name = "google-search-console-mcp"
 version = "0.1.0"
 description = "A local-first Google Search Console MCP execution layer."
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+  "pydantic>=2.11.0",
+  "PyYAML>=6.0.2",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -13,3 +16,9 @@ dev = [
 [build-system]
 requires = ["setuptools>=80.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
