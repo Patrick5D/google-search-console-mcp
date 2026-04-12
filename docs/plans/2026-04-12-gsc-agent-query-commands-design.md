@@ -136,6 +136,7 @@
 - 默认串行执行，不做无限并发
 - 必须对单个 URL 的失败单独记录，不把失败静默吞掉
 - 必须显式区分参数过大、配额耗尽、单 URL inspection 失败
+- `quota exhausted` 视为整批执行环境失效，必须立即停止，不受 `stop_on_error=false` 影响
 - `stop_on_error=false` 时，继续处理剩余 URL，并在 `errors` 中逐项返回失败
 - `stop_on_error=true` 时，命令在首个失败点停止，但仍返回已经完成的 `results/errors` 与计数；此时：
   - `halted=true`
