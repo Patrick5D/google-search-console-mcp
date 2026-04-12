@@ -9,9 +9,9 @@ audit.py: 审计层，负责 MCP 调用摘要的 JSONL 记录与运行时可追�
 cli.py: CLI 入口，负责 auth login/status 命令面
 config.py: 配置层，负责读取 server/paths YAML 并生成 Settings
 errors.py: 异常边界层，统一定义配置、认证、权限、上游与快照错误
-server.py: FastMCP 入口，负责组装工具与运行服务
+server.py: FastMCP 入口，负责组装 agent 查询命令、快照工具与运行服务
 gsc/: Google Search Console API 薄封装层
 snapshots/: CSV 快照层
-tools/: MCP 工具装配层
+tools/: MCP 工具装配层，承载站点、页面、查询词与 batch inspection 命令面
 
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

@@ -15,8 +15,22 @@ from ..audit import AuditLogger
 from ..auth import get_auth_status
 from ..config import Settings
 from ..gsc.client import build_search_console_service
-from ..gsc.inspection import inspect_url
-from ..gsc.performance import get_site_daily_summary, query_search_analytics
+from ..gsc.inspection import inspect_url, inspect_urls_batch
+from ..gsc.performance import (
+    get_page_queries,
+    get_page_query_pairs,
+    get_page_trend,
+    get_pages_by_path_prefix,
+    get_query_pages,
+    get_query_page_pairs,
+    get_query_trend,
+    get_site_daily_summary,
+    get_site_summary_by_country,
+    get_site_summary_by_device,
+    get_top_pages,
+    get_top_queries,
+    query_search_analytics,
+)
 from ..gsc.sitemaps import get_sitemap, list_sitemaps
 from ..gsc.sites import get_property, list_properties
 
@@ -28,7 +42,19 @@ def build_read_tool_names() -> list[str]:
         "get_property",
         "query_search_analytics",
         "get_site_daily_summary",
+        "get_site_summary_by_device",
+        "get_site_summary_by_country",
+        "get_top_pages",
+        "get_page_trend",
+        "get_pages_by_path_prefix",
+        "get_page_queries",
+        "get_page_query_pairs",
+        "get_top_queries",
+        "get_query_trend",
+        "get_query_pages",
+        "get_query_page_pairs",
         "inspect_url",
+        "inspect_urls_batch",
         "list_sitemaps",
         "get_sitemap",
     ]
@@ -89,8 +115,44 @@ class ReadToolService:
     def get_site_daily_summary(self, **kwargs):
         return self._run("get_site_daily_summary", kwargs, lambda: get_site_daily_summary(self._service(), **kwargs))
 
+    def get_site_summary_by_device(self, **kwargs):
+        return self._run("get_site_summary_by_device", kwargs, lambda: get_site_summary_by_device(self._service(), **kwargs))
+
+    def get_site_summary_by_country(self, **kwargs):
+        return self._run("get_site_summary_by_country", kwargs, lambda: get_site_summary_by_country(self._service(), **kwargs))
+
+    def get_top_pages(self, **kwargs):
+        return self._run("get_top_pages", kwargs, lambda: get_top_pages(self._service(), **kwargs))
+
+    def get_page_trend(self, **kwargs):
+        return self._run("get_page_trend", kwargs, lambda: get_page_trend(self._service(), **kwargs))
+
+    def get_pages_by_path_prefix(self, **kwargs):
+        return self._run("get_pages_by_path_prefix", kwargs, lambda: get_pages_by_path_prefix(self._service(), **kwargs))
+
+    def get_page_queries(self, **kwargs):
+        return self._run("get_page_queries", kwargs, lambda: get_page_queries(self._service(), **kwargs))
+
+    def get_page_query_pairs(self, **kwargs):
+        return self._run("get_page_query_pairs", kwargs, lambda: get_page_query_pairs(self._service(), **kwargs))
+
+    def get_top_queries(self, **kwargs):
+        return self._run("get_top_queries", kwargs, lambda: get_top_queries(self._service(), **kwargs))
+
+    def get_query_trend(self, **kwargs):
+        return self._run("get_query_trend", kwargs, lambda: get_query_trend(self._service(), **kwargs))
+
+    def get_query_pages(self, **kwargs):
+        return self._run("get_query_pages", kwargs, lambda: get_query_pages(self._service(), **kwargs))
+
+    def get_query_page_pairs(self, **kwargs):
+        return self._run("get_query_page_pairs", kwargs, lambda: get_query_page_pairs(self._service(), **kwargs))
+
     def inspect_url(self, **kwargs):
         return self._run("inspect_url", kwargs, lambda: inspect_url(self._service(), **kwargs))
+
+    def inspect_urls_batch(self, **kwargs):
+        return self._run("inspect_urls_batch", kwargs, lambda: inspect_urls_batch(self._service(), **kwargs))
 
     def list_sitemaps(self, **kwargs):
         return self._run("list_sitemaps", kwargs, lambda: list_sitemaps(self._service(), **kwargs))
@@ -152,9 +214,235 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
         )
 
+    @mcp.tool(name="get_site_summary_by_device")
+    def _get_site_summary_by_device(
+        property_uri: str,
+        start_date: str,
+        end_date: str,
+        search_type: str = "web",
+        row_limit: int = 10,
+        start_row: int = 0,
+    ):
+        return read_service.get_site_summary_by_device(
+            property_uri=property_uri,
+            start_date=start_date,
+            end_date=end_date,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_site_summary_by_country")
+    def _get_site_summary_by_country(
+        property_uri: str,
+        start_date: str,
+        end_date: str,
+        search_type: str = "web",
+        row_limit: int = 50,
+        start_row: int = 0,
+    ):
+        return read_service.get_site_summary_by_country(
+            property_uri=property_uri,
+            start_date=start_date,
+            end_date=end_date,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_top_pages")
+    def _get_top_pages(
+        property_uri: str,
+        start_date: str,
+        end_date: str,
+        metric: str = "clicks",
+        search_type: str = "web",
+        row_limit: int = 50,
+        start_row: int = 0,
+    ):
+        return read_service.get_top_pages(
+            property_uri=property_uri,
+            start_date=start_date,
+            end_date=end_date,
+            metric=metric,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_page_trend")
+    def _get_page_trend(
+        property_uri: str,
+        page: str,
+        start_date: str,
+        end_date: str,
+        search_type: str = "web",
+    ):
+        return read_service.get_page_trend(
+            property_uri=property_uri,
+            page=page,
+            start_date=start_date,
+            end_date=end_date,
+            search_type=search_type,
+        )
+
+    @mcp.tool(name="get_pages_by_path_prefix")
+    def _get_pages_by_path_prefix(
+        property_uri: str,
+        path_prefix: str,
+        start_date: str,
+        end_date: str,
+        metric: str = "clicks",
+        search_type: str = "web",
+        row_limit: int = 100,
+        start_row: int = 0,
+    ):
+        return read_service.get_pages_by_path_prefix(
+            property_uri=property_uri,
+            path_prefix=path_prefix,
+            start_date=start_date,
+            end_date=end_date,
+            metric=metric,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_page_queries")
+    def _get_page_queries(
+        property_uri: str,
+        page: str,
+        start_date: str,
+        end_date: str,
+        metric: str = "clicks",
+        search_type: str = "web",
+        row_limit: int = 100,
+        start_row: int = 0,
+    ):
+        return read_service.get_page_queries(
+            property_uri=property_uri,
+            page=page,
+            start_date=start_date,
+            end_date=end_date,
+            metric=metric,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_page_query_pairs")
+    def _get_page_query_pairs(
+        property_uri: str,
+        page: str,
+        start_date: str,
+        end_date: str,
+        search_type: str = "web",
+        row_limit: int = 200,
+        start_row: int = 0,
+    ):
+        return read_service.get_page_query_pairs(
+            property_uri=property_uri,
+            page=page,
+            start_date=start_date,
+            end_date=end_date,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_top_queries")
+    def _get_top_queries(
+        property_uri: str,
+        start_date: str,
+        end_date: str,
+        metric: str = "clicks",
+        search_type: str = "web",
+        row_limit: int = 100,
+        start_row: int = 0,
+    ):
+        return read_service.get_top_queries(
+            property_uri=property_uri,
+            start_date=start_date,
+            end_date=end_date,
+            metric=metric,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_query_trend")
+    def _get_query_trend(
+        property_uri: str,
+        query: str,
+        start_date: str,
+        end_date: str,
+        search_type: str = "web",
+    ):
+        return read_service.get_query_trend(
+            property_uri=property_uri,
+            query=query,
+            start_date=start_date,
+            end_date=end_date,
+            search_type=search_type,
+        )
+
+    @mcp.tool(name="get_query_pages")
+    def _get_query_pages(
+        property_uri: str,
+        query: str,
+        start_date: str,
+        end_date: str,
+        metric: str = "clicks",
+        search_type: str = "web",
+        row_limit: int = 100,
+        start_row: int = 0,
+    ):
+        return read_service.get_query_pages(
+            property_uri=property_uri,
+            query=query,
+            start_date=start_date,
+            end_date=end_date,
+            metric=metric,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
+    @mcp.tool(name="get_query_page_pairs")
+    def _get_query_page_pairs(
+        property_uri: str,
+        query: str,
+        start_date: str,
+        end_date: str,
+        search_type: str = "web",
+        row_limit: int = 200,
+        start_row: int = 0,
+    ):
+        return read_service.get_query_page_pairs(
+            property_uri=property_uri,
+            query=query,
+            start_date=start_date,
+            end_date=end_date,
+            search_type=search_type,
+            row_limit=row_limit,
+            start_row=start_row,
+        )
+
     @mcp.tool(name="inspect_url")
     def _inspect_url(property_uri: str, inspection_url: str):
         return read_service.inspect_url(property_uri=property_uri, inspection_url=inspection_url)
+
+    @mcp.tool(name="inspect_urls_batch")
+    def _inspect_urls_batch(
+        property_uri: str,
+        inspection_urls: list[str],
+        stop_on_error: bool = False,
+    ):
+        return read_service.inspect_urls_batch(
+            property_uri=property_uri,
+            inspection_urls=inspection_urls,
+            stop_on_error=stop_on_error,
+        )
 
     @mcp.tool(name="list_sitemaps")
     def _list_sitemaps(property_uri: str):
