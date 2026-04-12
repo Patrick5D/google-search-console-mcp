@@ -4,6 +4,8 @@
 
 在现有 `google-search-console-mcp` 只读骨架上，补一套主要给 AI agent 使用的高频查询命令面。命令优先表达任务语义，而不是暴露底层 API mode；全部围绕单个 `property_uri` 工作，不做多站点聚合。
 
+> **Canonical Note:** 从本设计稿获批起，agent 查询命令面以本文为准。`2026-04-11-google-search-console-mcp-design.md` 与 `2026-04-11-google-search-console-mcp.md` 中旧的工具清单仅保留为骨架阶段历史记录，不再作为命令面真相源。
+
 ## 1. 设计约束
 
 - 主要使用者是 AI agent，不以人类终端输入体验为中心。
@@ -24,7 +26,7 @@
 
 ### 2.2 统一参数
 
-除站点发现命令外，所有查询命令都要求：
+除站点发现命令与 inspection 命令外，所有查询命令都要求：
 
 - `property_uri`
 - `start_date`
@@ -43,6 +45,11 @@
 - `impressions`
 - `ctr`
 - `average_position`
+
+排序契约固定如下：
+
+- `clicks`、`impressions`、`ctr` 按降序排序
+- `average_position` 按升序排序
 
 ## 3. 命令分层
 
@@ -111,7 +118,7 @@
 - `inspect_url(property_uri, inspection_url)`
   返回单个 URL 的索引状态、canonical、crawl 时间和 verdict。
 
-- `inspect_urls_batch(property_uri, inspection_urls, stop_on_error=false)`
+- `inspect_urls_batch(property_uri, inspection_urls, stop_on_error=false, max_urls=50)`
   对一批 URL 执行 inspection，返回：
   - `property_uri`
   - `results`
@@ -120,15 +127,30 @@
   - `error_count`
   - `total_count`
 
-批量命令不因为单个 URL 失败而让整批失败，除非显式要求 `stop_on_error=true`。
+批量命令约束：
 
-### 3.6 底层兜底命令
+- 单次最多允许 `50` 个 URL；超过即直接拒绝
+- 默认串行执行，不做无限并发
+- 必须对单个 URL 的失败单独记录，不把失败静默吞掉
+- 必须显式区分参数过大、配额耗尽、单 URL inspection 失败
+- 不因为单个 URL 失败而让整批失败，除非显式要求 `stop_on_error=true`
+
+### 3.6 低频命令处理
+
+以下命令保留在底层骨架中，但不属于 agent 的一线高频命令面：
+
+- `list_sitemaps`
+- `get_sitemap`
+
+理由：这两者是技术排障时的低频命令，不值得和站点/页面/query 主路径放在同一优先级。
+
+### 3.7 底层兜底命令
 
 - `query_search_analytics(property_uri, start_date, end_date, dimensions=None, row_limit=1000, start_row=0, dimension_filter_groups=None, search_type="web", data_state=None, aggregation_type=None)`
 
 这是模板命令之外的万能刀。模板命令应当尽量覆盖高频任务，但不追求穷尽。凡是模板没有覆盖到的组合查询，都应该回到这把刀。
 
-### 3.7 快照命令
+### 3.8 快照命令
 
 这批命令不是本轮新增重点，但仍然保留在 agent 命令面内：
 
@@ -150,6 +172,19 @@
 禁止在命令层返回面向人类阅读的表格字符串。返回结构必须保持 JSON 友好、字段名稳定、可继续被 agent 消费。
 
 ## 5. 为什么按这种方式拆
+
+### 5.0 `path_prefix` 语义
+
+`get_pages_by_path_prefix` 的 `path_prefix` 必须按 URL 的 `path` 部分做前缀匹配，而不是对完整 URL 做 `contains`。
+
+在 `sc-domain:*` property 下：
+
+- 匹配应跨协议与跨子域进行
+- 仅比较解析后的 URL path，例如 `/blog/`、`/tools/`
+- `https://a.example.com/blog/x` 与 `http://example.com/blog/y` 都应匹配 `/blog/`
+- `https://example.com/not-blog/?redirect=/blog/` 不应误匹配
+
+这条语义必须写死，否则实现极易退化成脏的字符串包含匹配。
 
 ### 5.1 现象层
 
@@ -193,6 +228,7 @@ agent 日常会反复问这些问题：
 - 建议型或结论型输出
 - `get_site_summary_by_date_and_country`
 - `get_site_summary_by_date_and_device`
+- 把 `list_sitemaps` / `get_sitemap` 提升为一线高频命令
 
 这些都属于更高一层的分析逻辑，而不是 MCP 查询协议层。
 

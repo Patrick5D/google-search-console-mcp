@@ -1,5 +1,7 @@
 # Google Search Console MCP Implementation Plan
 
+> **Historical Note:** 本计划用于第一版只读骨架落地。涉及工具清单的步骤以骨架阶段为准；后续 agent 查询命令面的 canonical 设计已转移到 `docs/plans/2026-04-12-gsc-agent-query-commands-design.md`。
+
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Build a read-only Google Search Console MCP that supports multi-property access under one OAuth account and manual site-day CSV snapshots.

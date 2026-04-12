@@ -1,5 +1,7 @@
 # Google Search Console MCP Design
 
+> **Historical Note:** 本文仍是项目骨架、认证、快照与模块边界设计来源；但从 `2026-04-12-gsc-agent-query-commands-design.md` 获批起，agent 查询命令面不再以本文第 4 节工具清单为准。
+
 **目标**
 
 构建一个面向同一 Google 账号下多个站点复用的 Google Search Console MCP。第一版严格只读，直接使用 `property_uri` 访问站点，暴露原始数据优先的查询工具，并支持手动触发 `site/day` 级 CSV 快照。
