@@ -347,6 +347,8 @@ git commit -m "feat: add audit logging"
 
 ### Task 7: Register read-only MCP tools
 
+> Historical note: 本任务中的工具名清单只代表骨架阶段目标，不代表最终 agent command surface。若与 `docs/plans/2026-04-12-gsc-agent-query-commands-design.md` 冲突，以后者为准。
+
 **Files:**
 - Create: `src/google_search_console_mcp/tools/CLAUDE.md`
 - Create: `src/google_search_console_mcp/tools/__init__.py`

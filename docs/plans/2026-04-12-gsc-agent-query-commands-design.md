@@ -118,7 +118,7 @@
 - `inspect_url(property_uri, inspection_url)`
   返回单个 URL 的索引状态、canonical、crawl 时间和 verdict。
 
-- `inspect_urls_batch(property_uri, inspection_urls, stop_on_error=false, max_urls=50)`
+- `inspect_urls_batch(property_uri, inspection_urls, stop_on_error=false)`
   对一批 URL 执行 inspection，返回：
   - `property_uri`
   - `results`
@@ -126,14 +126,22 @@
   - `success_count`
   - `error_count`
   - `total_count`
+  - `processed_count`
+  - `halted`
+  - `halt_reason`
 
 批量命令约束：
 
-- 单次最多允许 `50` 个 URL；超过即直接拒绝
+- 单次最多允许 `50` 个 URL；这是实现内硬常量，不是公开可调参数
 - 默认串行执行，不做无限并发
 - 必须对单个 URL 的失败单独记录，不把失败静默吞掉
 - 必须显式区分参数过大、配额耗尽、单 URL inspection 失败
-- 不因为单个 URL 失败而让整批失败，除非显式要求 `stop_on_error=true`
+- `stop_on_error=false` 时，继续处理剩余 URL，并在 `errors` 中逐项返回失败
+- `stop_on_error=true` 时，命令在首个失败点停止，但仍返回已经完成的 `results/errors` 与计数；此时：
+  - `halted=true`
+  - `halt_reason` 写明触发中止的错误类型
+  - `processed_count < total_count`
+- 参数级错误（如 URL 数量超过 50）直接整批拒绝，不进入部分执行
 
 ### 3.6 低频命令处理
 
