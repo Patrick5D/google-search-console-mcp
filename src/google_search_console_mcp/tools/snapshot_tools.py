@@ -1,5 +1,5 @@
 """
-[INPUT]: 依赖站点日汇总查询与 CSV 快照写入器
+[INPUT]: 依赖 MCP 参数契约、工具描述与站点日汇总查询与 CSV 快照写入器
 [OUTPUT]: 对外提供 SnapshotToolService 与 register_snapshot_tools
 [POS]: tools 的快照装配器，把 site/day 汇总折叠成显式快照动作
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -13,6 +13,9 @@ from pathlib import Path
 
 from ..audit import AuditLogger
 from ..config import Settings
+from ..gsc.validation import SearchType
+from .contracts import DESCRIPTIONS
+from mcp.types import ToolAnnotations
 from ..errors import SnapshotError
 from ..snapshots.csv_writer import (
     list_snapshot_files,
@@ -49,7 +52,7 @@ class SnapshotToolService:
             raise SnapshotError(f"snapshot path outside snapshot root: {path}") from exc
         return path
 
-    def snapshot_site_day(self, *, property_uri: str, date: str, search_type: str = "web"):
+    def snapshot_site_day(self, *, property_uri: str, date: str, search_type: SearchType = "web"):
         args_summary = {"property_uri": property_uri, "date": date, "search_type": search_type}
         try:
             rows = self.read_service.get_site_daily_summary(
@@ -109,14 +112,14 @@ class SnapshotToolService:
 
 
 def register_snapshot_tools(mcp, *, snapshot_service: SnapshotToolService):
-    @mcp.tool(name="snapshot_site_day")
-    def _snapshot_site_day(property_uri: str, date: str, search_type: str = "web"):
+    @mcp.tool(name="snapshot_site_day", description=DESCRIPTIONS["snapshot_site_day"], annotations=ToolAnnotations(readOnlyHint=False))
+    def _snapshot_site_day(property_uri: str, date: str, search_type: SearchType = "web"):
         return snapshot_service.snapshot_site_day(property_uri=property_uri, date=date, search_type=search_type)
 
-    @mcp.tool(name="list_snapshots")
+    @mcp.tool(name="list_snapshots", description=DESCRIPTIONS["list_snapshots"], annotations=ToolAnnotations(readOnlyHint=True))
     def _list_snapshots(property_uri: str | None = None):
         return snapshot_service.list_snapshots(property_uri)
 
-    @mcp.tool(name="read_snapshot")
+    @mcp.tool(name="read_snapshot", description=DESCRIPTIONS["read_snapshot"], annotations=ToolAnnotations(readOnlyHint=True))
     def _read_snapshot(snapshot_path: str):
         return snapshot_service.read_snapshot(snapshot_path)

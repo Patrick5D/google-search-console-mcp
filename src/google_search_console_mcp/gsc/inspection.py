@@ -1,5 +1,5 @@
 """
-[INPUT]: 依赖 Search Console URL Inspection API 的 inspect() 能力
+[INPUT]: 依赖 execute_read 有限重试与 Search Console URL Inspection API 的 inspect() 能力
 [OUTPUT]: 对外提供 inspect_url 与 inspect_urls_batch
 [POS]: gsc 的 URL 检查读取器，负责单 URL 与 batch inspection 查询
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -7,12 +7,14 @@
 
 from __future__ import annotations
 
+from .request import execute_read
+
 from ..errors import ValidationError
 
 
 def inspect_url(service, *, property_uri: str, inspection_url: str) -> dict[str, object]:
     body = {"inspectionUrl": inspection_url, "siteUrl": property_uri}
-    return service.urlInspection().index().inspect(body=body).execute()
+    return execute_read(service.urlInspection().index().inspect(body=body))
 
 
 def inspect_urls_batch(

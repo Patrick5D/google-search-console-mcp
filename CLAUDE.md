@@ -1,4 +1,4 @@
-# google-search-console-mcp - 面向多站点复用的 Google Search Console MCP 读取层
+# google-search-console-mcp - 面向多站点的 Google Search Console MCP 读取与分析层
 Python 3.12 + FastMCP/MCP SDK + Google APIs OAuth + Search Console API + CSV snapshots + pytest
 
 <directory>
@@ -10,7 +10,7 @@ docs/ - 设计与计划文档目录，沉淀系统地图与实现路线 (1子目
 </directory>
 
 <directory>
-src/ - Python 源码目录，承载 MCP server、GSC API 封装与快照逻辑 (1子目录: google_search_console_mcp)
+src/ - Python 源码目录，承载 MCP server、有界取数、确定性分析与快照逻辑 (1子目录: google_search_console_mcp)
 </directory>
 
 <directory>
@@ -34,3 +34,7 @@ pyproject.toml - Python 项目元数据与依赖定义，提供 uv/pytest 运行
 </config>
 
 法则: 极简·稳定·导航·版本精确
+
+接口约定：Search Analytics 工具返回 rows/meta。分析工具返回 items/meta。
+数据约定：日期采用 PT，CTR 采用比例。缺失行不等于零。
+运行边界：默认绑定本机，只读 Google 数据；快照显式写入本地。

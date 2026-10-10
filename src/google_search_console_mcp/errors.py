@@ -1,6 +1,6 @@
 """
 [INPUT]: 依赖内建 Exception 体系定义项目错误边界
-[OUTPUT]: 对外提供 ConfigError、AuthError、AuthorizationError、ValidationError、UpstreamApiError、SnapshotError
+[OUTPUT]: 对外提供 ConfigError、AuthError、AuthorizationError、ValidationError、UpstreamApiError、QuotaError、SnapshotError
 [POS]: google_search_console_mcp 的异常分层，被配置、认证、客户端与快照模块共享
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 """
@@ -28,3 +28,7 @@ class UpstreamApiError(Exception):
 
 class SnapshotError(Exception):
     """本地快照写入或读取失败。"""
+
+
+class QuotaError(UpstreamApiError):
+    """Google 每日或站点配额耗尽。"""

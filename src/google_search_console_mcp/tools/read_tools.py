@@ -1,5 +1,5 @@
 """
-[INPUT]: 依赖认证状态、GSC service 构造器与各读取子模块
+[INPUT]: 依赖 MCP 参数契约、工具描述与认证状态、GSC service 构造器与各读取子模块
 [OUTPUT]: 对外提供 ReadToolService、build_read_tool_names 与 register_read_tools
 [POS]: tools 的只读装配器，把底层读取能力折叠成稳定 MCP 工具接口
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -14,6 +14,9 @@ from typing import Callable
 from ..audit import AuditLogger
 from ..auth import get_auth_status
 from ..config import Settings
+from ..gsc.validation import SearchType, DataState, AggregationType, Metric
+from .contracts import DESCRIPTIONS, RowLimit, StartRow, MaxRows, tool_result
+from mcp.types import ToolAnnotations
 from ..gsc.client import build_search_console_service
 from ..gsc.inspection import inspect_url, inspect_urls_batch
 from ..gsc.performance import (
@@ -162,32 +165,34 @@ class ReadToolService:
 
 
 def register_read_tools(mcp, *, read_service: ReadToolService):
-    @mcp.tool(name="get_account_status")
+    @mcp.tool(name="get_account_status", description=DESCRIPTIONS["get_account_status"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_account_status():
-        return read_service.get_account_status()
+        return tool_result(read_service.get_account_status())
 
-    @mcp.tool(name="list_properties")
+    @mcp.tool(name="list_properties", description=DESCRIPTIONS["list_properties"], annotations=ToolAnnotations(readOnlyHint=True))
     def _list_properties():
-        return read_service.list_properties()
+        return tool_result(read_service.list_properties())
 
-    @mcp.tool(name="get_property")
+    @mcp.tool(name="get_property", description=DESCRIPTIONS["get_property"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_property(property_uri: str):
-        return read_service.get_property(property_uri)
+        return tool_result(read_service.get_property(property_uri))
 
-    @mcp.tool(name="query_search_analytics")
+    @mcp.tool(name="query_search_analytics", description=DESCRIPTIONS["query_search_analytics"], annotations=ToolAnnotations(readOnlyHint=True))
     def _query_search_analytics(
         property_uri: str,
         start_date: str,
         end_date: str,
         dimensions: list[str] | None = None,
-        row_limit: int = 1000,
-        start_row: int = 0,
+        row_limit: RowLimit = 1000,
+        start_row: StartRow = 0,
         dimension_filter_groups: list[dict[str, object]] | None = None,
-        search_type: str = "web",
-        data_state: str | None = None,
-        aggregation_type: str | None = None,
+        search_type: SearchType = "web",
+        data_state: DataState | None = None,
+        aggregation_type: AggregationType | None = None,
+        fetch_all: bool = False,
+        max_rows: MaxRows = 100000,
     ):
-        return read_service.query_search_analytics(
+        return tool_result(read_service.query_search_analytics(
             property_uri=property_uri,
             start_date=start_date,
             end_date=end_date,
@@ -198,69 +203,71 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             data_state=data_state,
             aggregation_type=aggregation_type,
-        )
+            fetch_all=fetch_all,
+            max_rows=max_rows,
+        ))
 
-    @mcp.tool(name="get_site_daily_summary")
+    @mcp.tool(name="get_site_daily_summary", description=DESCRIPTIONS["get_site_daily_summary"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_site_daily_summary(
         property_uri: str,
         start_date: str,
         end_date: str,
-        search_type: str = "web",
+        search_type: SearchType = "web",
     ):
-        return read_service.get_site_daily_summary(
+        return tool_result(read_service.get_site_daily_summary(
             property_uri=property_uri,
             start_date=start_date,
             end_date=end_date,
             search_type=search_type,
-        )
+        ))
 
-    @mcp.tool(name="get_site_summary_by_device")
+    @mcp.tool(name="get_site_summary_by_device", description=DESCRIPTIONS["get_site_summary_by_device"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_site_summary_by_device(
         property_uri: str,
         start_date: str,
         end_date: str,
-        search_type: str = "web",
-        row_limit: int = 10,
-        start_row: int = 0,
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 10,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_site_summary_by_device(
+        return tool_result(read_service.get_site_summary_by_device(
             property_uri=property_uri,
             start_date=start_date,
             end_date=end_date,
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_site_summary_by_country")
+    @mcp.tool(name="get_site_summary_by_country", description=DESCRIPTIONS["get_site_summary_by_country"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_site_summary_by_country(
         property_uri: str,
         start_date: str,
         end_date: str,
-        search_type: str = "web",
-        row_limit: int = 50,
-        start_row: int = 0,
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 50,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_site_summary_by_country(
+        return tool_result(read_service.get_site_summary_by_country(
             property_uri=property_uri,
             start_date=start_date,
             end_date=end_date,
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_top_pages")
+    @mcp.tool(name="get_top_pages", description=DESCRIPTIONS["get_top_pages"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_top_pages(
         property_uri: str,
         start_date: str,
         end_date: str,
-        metric: str = "clicks",
-        search_type: str = "web",
-        row_limit: int = 50,
-        start_row: int = 0,
+        metric: Metric = "clicks",
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 50,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_top_pages(
+        return tool_result(read_service.get_top_pages(
             property_uri=property_uri,
             start_date=start_date,
             end_date=end_date,
@@ -268,36 +275,36 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_page_trend")
+    @mcp.tool(name="get_page_trend", description=DESCRIPTIONS["get_page_trend"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_page_trend(
         property_uri: str,
         page: str,
         start_date: str,
         end_date: str,
-        search_type: str = "web",
+        search_type: SearchType = "web",
     ):
-        return read_service.get_page_trend(
+        return tool_result(read_service.get_page_trend(
             property_uri=property_uri,
             page=page,
             start_date=start_date,
             end_date=end_date,
             search_type=search_type,
-        )
+        ))
 
-    @mcp.tool(name="get_pages_by_path_prefix")
+    @mcp.tool(name="get_pages_by_path_prefix", description=DESCRIPTIONS["get_pages_by_path_prefix"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_pages_by_path_prefix(
         property_uri: str,
         path_prefix: str,
         start_date: str,
         end_date: str,
-        metric: str = "clicks",
-        search_type: str = "web",
-        row_limit: int = 100,
-        start_row: int = 0,
+        metric: Metric = "clicks",
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 100,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_pages_by_path_prefix(
+        return tool_result(read_service.get_pages_by_path_prefix(
             property_uri=property_uri,
             path_prefix=path_prefix,
             start_date=start_date,
@@ -306,20 +313,20 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_page_queries")
+    @mcp.tool(name="get_page_queries", description=DESCRIPTIONS["get_page_queries"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_page_queries(
         property_uri: str,
         page: str,
         start_date: str,
         end_date: str,
-        metric: str = "clicks",
-        search_type: str = "web",
-        row_limit: int = 100,
-        start_row: int = 0,
+        metric: Metric = "clicks",
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 100,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_page_queries(
+        return tool_result(read_service.get_page_queries(
             property_uri=property_uri,
             page=page,
             start_date=start_date,
@@ -328,19 +335,19 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_page_query_pairs")
+    @mcp.tool(name="get_page_query_pairs", description=DESCRIPTIONS["get_page_query_pairs"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_page_query_pairs(
         property_uri: str,
         page: str,
         start_date: str,
         end_date: str,
-        search_type: str = "web",
-        row_limit: int = 200,
-        start_row: int = 0,
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 200,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_page_query_pairs(
+        return tool_result(read_service.get_page_query_pairs(
             property_uri=property_uri,
             page=page,
             start_date=start_date,
@@ -348,19 +355,19 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_top_queries")
+    @mcp.tool(name="get_top_queries", description=DESCRIPTIONS["get_top_queries"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_top_queries(
         property_uri: str,
         start_date: str,
         end_date: str,
-        metric: str = "clicks",
-        search_type: str = "web",
-        row_limit: int = 100,
-        start_row: int = 0,
+        metric: Metric = "clicks",
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 100,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_top_queries(
+        return tool_result(read_service.get_top_queries(
             property_uri=property_uri,
             start_date=start_date,
             end_date=end_date,
@@ -368,36 +375,36 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_query_trend")
+    @mcp.tool(name="get_query_trend", description=DESCRIPTIONS["get_query_trend"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_query_trend(
         property_uri: str,
         query: str,
         start_date: str,
         end_date: str,
-        search_type: str = "web",
+        search_type: SearchType = "web",
     ):
-        return read_service.get_query_trend(
+        return tool_result(read_service.get_query_trend(
             property_uri=property_uri,
             query=query,
             start_date=start_date,
             end_date=end_date,
             search_type=search_type,
-        )
+        ))
 
-    @mcp.tool(name="get_query_pages")
+    @mcp.tool(name="get_query_pages", description=DESCRIPTIONS["get_query_pages"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_query_pages(
         property_uri: str,
         query: str,
         start_date: str,
         end_date: str,
-        metric: str = "clicks",
-        search_type: str = "web",
-        row_limit: int = 100,
-        start_row: int = 0,
+        metric: Metric = "clicks",
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 100,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_query_pages(
+        return tool_result(read_service.get_query_pages(
             property_uri=property_uri,
             query=query,
             start_date=start_date,
@@ -406,19 +413,19 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="get_query_page_pairs")
+    @mcp.tool(name="get_query_page_pairs", description=DESCRIPTIONS["get_query_page_pairs"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_query_page_pairs(
         property_uri: str,
         query: str,
         start_date: str,
         end_date: str,
-        search_type: str = "web",
-        row_limit: int = 200,
-        start_row: int = 0,
+        search_type: SearchType = "web",
+        row_limit: RowLimit = 200,
+        start_row: StartRow = 0,
     ):
-        return read_service.get_query_page_pairs(
+        return tool_result(read_service.get_query_page_pairs(
             property_uri=property_uri,
             query=query,
             start_date=start_date,
@@ -426,28 +433,28 @@ def register_read_tools(mcp, *, read_service: ReadToolService):
             search_type=search_type,
             row_limit=row_limit,
             start_row=start_row,
-        )
+        ))
 
-    @mcp.tool(name="inspect_url")
+    @mcp.tool(name="inspect_url", description=DESCRIPTIONS["inspect_url"], annotations=ToolAnnotations(readOnlyHint=True))
     def _inspect_url(property_uri: str, inspection_url: str):
-        return read_service.inspect_url(property_uri=property_uri, inspection_url=inspection_url)
+        return tool_result(read_service.inspect_url(property_uri=property_uri, inspection_url=inspection_url))
 
-    @mcp.tool(name="inspect_urls_batch")
+    @mcp.tool(name="inspect_urls_batch", description=DESCRIPTIONS["inspect_urls_batch"], annotations=ToolAnnotations(readOnlyHint=True))
     def _inspect_urls_batch(
         property_uri: str,
         inspection_urls: list[str],
         stop_on_error: bool = False,
     ):
-        return read_service.inspect_urls_batch(
+        return tool_result(read_service.inspect_urls_batch(
             property_uri=property_uri,
             inspection_urls=inspection_urls,
             stop_on_error=stop_on_error,
-        )
+        ))
 
-    @mcp.tool(name="list_sitemaps")
+    @mcp.tool(name="list_sitemaps", description=DESCRIPTIONS["list_sitemaps"], annotations=ToolAnnotations(readOnlyHint=True))
     def _list_sitemaps(property_uri: str):
-        return read_service.list_sitemaps(property_uri=property_uri)
+        return tool_result(read_service.list_sitemaps(property_uri=property_uri))
 
-    @mcp.tool(name="get_sitemap")
+    @mcp.tool(name="get_sitemap", description=DESCRIPTIONS["get_sitemap"], annotations=ToolAnnotations(readOnlyHint=True))
     def _get_sitemap(property_uri: str, sitemap_url: str):
-        return read_service.get_sitemap(property_uri=property_uri, sitemap_url=sitemap_url)
+        return tool_result(read_service.get_sitemap(property_uri=property_uri, sitemap_url=sitemap_url))

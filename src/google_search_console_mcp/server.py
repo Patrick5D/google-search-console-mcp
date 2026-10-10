@@ -1,5 +1,5 @@
 """
-[INPUT]: 依赖 FastMCP、dotenv、Settings、AuditLogger 与工具注册函数
+[INPUT]: 依赖 FastMCP、dotenv、Settings、AuditLogger 与读取/分析/快照注册函数
 [OUTPUT]: 对外提供 create_server、load_local_env 与 CLI main 入口
 [POS]: google_search_console_mcp 的 MCP 入口，被本地 HTTP 服务与测试直接使用
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -15,6 +15,7 @@ from mcp.server.fastmcp import FastMCP
 
 from .audit import AuditLogger
 from .config import Settings, load_settings
+from .tools.analysis_tools import register_analysis_tools
 from .tools.read_tools import ReadToolService, register_read_tools
 from .tools.snapshot_tools import SnapshotToolService, register_snapshot_tools
 
@@ -32,6 +33,7 @@ def create_server(*, settings: Settings) -> FastMCP:
     snapshot_service = SnapshotToolService(settings=settings, read_service=read_service, audit_logger=audit_logger)
 
     register_read_tools(mcp, read_service=read_service)
+    register_analysis_tools(mcp, read_service=read_service)
     register_snapshot_tools(mcp, snapshot_service=snapshot_service)
 
     # ASCII block comment: 保持入口层对审计实例有显式持有，避免后续被错误折叠掉

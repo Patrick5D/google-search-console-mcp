@@ -2,10 +2,13 @@
 > L2 | 父级: /Users/celeste/Documents/GitHub/google-search-console-mcp/CLAUDE.md
 
 成员清单
-CLAUDE.md: 源码目录地图，定义 MCP 入口、GSC 客户端与快照写入层的未来边界
+CLAUDE.md: 源码目录地图，定义 MCP 入口、GSC 客户端与快照写入层的职责边界
 google_search_console_mcp/: 主包目录，承载配置、认证、server、GSC API、快照与工具装配
 google_search_console_mcp/__init__.py: 包入口，导出版本信息与顶层模块边界
 google_search_console_mcp/auth.py: 认证层，负责 OAuth 文件状态探测、token 加载与刷新边界
+google_search_console_mcp/portfolio_analysis.py: 跨站与搜索类型对照，复用有界查询和周期比较
+google_search_console_mcp/ctr_benchmark.py: 本站 CTR 对照，从参考样本排除目标页面
+google_search_console_mcp/analysis.py: 确定性分析层，提供等长周期、低 CTR、连续下降与查询重叠分析
 google_search_console_mcp/audit.py: 审计层，负责 MCP 工具调用的本地 JSONL 记录
 google_search_console_mcp/cli.py: 命令行入口，负责显式触发 auth login/status 等交互流程
 google_search_console_mcp/server.py: MCP 入口，负责 FastMCP 组装、环境加载与工具注册

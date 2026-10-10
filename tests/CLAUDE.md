@@ -14,4 +14,12 @@ test_server.py: server 层测试，验证 FastMCP 入口能被正确组装
 test_cli.py: CLI 层测试，验证 auth 子命令结构与解析行为
 test_review_fixes.py: review 修复测试，覆盖快照读取边界、空数据快照、审计接线与认证状态收紧
 
+test_query_integrity.py: 完整性回归，验证跨页排序、截断元信息与搜索类型快照隔离
+
+test_protocol_contracts.py: 协议回归，验证工具描述、参数校验、元信息与重试分类
+
+test_analysis.py: 分析回归，验证等长窗口、缺失行、阈值、持续下降与重叠证据
+
+test_extended_analysis.py: 扩展分析回归，校验共同筛选、部分失败、缺失侧与留一页面 CTR 对照
+
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
