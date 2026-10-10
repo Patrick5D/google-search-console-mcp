@@ -1,3 +1,5 @@
+> Historical design document. For current installation and supported behavior, see [README](../../README.md). Paths are illustrative.
+
 # Google Search Console MCP Implementation Plan
 
 > **Historical Note:** 本计划用于第一版只读骨架落地。涉及工具清单的步骤以骨架阶段为准；后续 agent 查询命令面的 canonical 设计已转移到 `docs/plans/2026-04-12-gsc-agent-query-commands-design.md`。

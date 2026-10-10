@@ -1,3 +1,8 @@
+# [INPUT]: 作为 Google Search Console MCP 的示例路径配置，被文档与本地配置复制流程参考
+# [OUTPUT]: 提供 oauth_client_path、token_path、audit_log_path 与 snapshot_root 示例值
+# [POS]: google-search-console-mcp/config 的示例路径入口，不应被 mcp.sh 直接当作运行配置消费
+# [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
 paths:
   oauth_client_path: ./config/oauth_client.json
   token_path: ./config/token.json

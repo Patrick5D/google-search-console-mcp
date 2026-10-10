@@ -1,3 +1,8 @@
+# [INPUT]: 作为 Google Search Console MCP 的示例服务配置，被文档与本地配置复制流程参考
+# [OUTPUT]: 提供 host、port 与 agent_header_name 示例值
+# [POS]: google-search-console-mcp/config 的示例入口，不应被 mcp.sh 直接当作运行配置消费
+# [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
 server:
   host: 127.0.0.1
   port: 8765

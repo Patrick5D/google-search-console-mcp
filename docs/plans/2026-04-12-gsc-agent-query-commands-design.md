@@ -1,3 +1,5 @@
+> Historical design document. For current installation and supported behavior, see [README](../../README.md). Paths are illustrative.
+
 # GSC Agent Query Commands Design
 
 **目标**

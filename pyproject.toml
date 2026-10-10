@@ -2,16 +2,23 @@
 name = "google-search-console-mcp"
 version = "0.1.0"
 description = "A local-first Google Search Console MCP execution layer."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = [
   "google-api-python-client>=2.169.0",
   "google-auth>=2.40.0",
   "google-auth-oauthlib>=1.2.2",
-  "mcp>=1.24.0",
+  "mcp>=1.24.0,<2",
   "pydantic>=2.11.0",
   "python-dotenv>=1.1.0",
   "PyYAML>=6.0.2",
 ]
+
+[project.urls]
+Repository = "https://github.com/Patrick5D/google-search-console-mcp"
+Issues = "https://github.com/Patrick5D/google-search-console-mcp/issues"
 
 [project.optional-dependencies]
 dev = [

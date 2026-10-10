@@ -1,5 +1,5 @@
 # tests/
-> L2 | 父级: /Users/celeste/Documents/GitHub/google-search-console-mcp/CLAUDE.md
+> L2 | 父级: ../CLAUDE.md
 
 成员清单
 CLAUDE.md: 测试目录地图，约束配置、认证、工具与快照测试的分层策略
@@ -21,5 +21,7 @@ test_protocol_contracts.py: 协议回归，验证工具描述、参数校验、�
 test_analysis.py: 分析回归，验证等长窗口、缺失行、阈值、持续下降与重叠证据
 
 test_extended_analysis.py: 扩展分析回归，校验共同筛选、部分失败、缺失侧与留一页面 CTR 对照
+
+smoke_http.py: 无凭据 HTTP 冒烟入口，启动独立端口并核验工具与认证缺失响应
 
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

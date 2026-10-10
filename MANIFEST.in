@@ -1,0 +1,5 @@
+include README.md LICENSE CONTRIBUTING.md CLAUDE.md .gitignore .env.example
+include config/server.example.yaml config/paths.example.yaml
+include docs/data-contract.md docs/gsc-tool-contracts.md
+include tests/smoke_http.py
+recursive-include tests test_*.py

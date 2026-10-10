@@ -154,19 +154,3 @@ Discover/Google News 不允许查询词筛选。
 仍返回各区间样本与 reference_coverage_ratio。
 目标页面未返回时，状态为 not_returned。
 不使用行业曲线回退，不预测新增点击。
-
-## 2026-10-10 验收记录
-
-本地回归：60 项测试通过，差异空白检查通过。
-真实查询窗口：2026-09-28 至 2026-10-04（PT）。
-Control Resonant 与 Motiofy 的站点汇总已独立核对。
-壁纸页的 Web/Image 数据已按页面分别查询核对。
-CTR 抽查使用 645 条页面—查询词明细。
-目标页面为 Control Resonant 的 control-resonant-vs-control。
-剔除目标后，参考区间的点击、曝光与样本数量均匹配。
-
-本地服务已通过既有 mcp-manager 启动。
-HTTP MCP tools/list 返回 30 个有描述的工具。
-三个新增工具均通过 HTTP 真实调用。
-客户端仍需重新连接才能刷新旧的工具列表。
-本次未提交或推送 Git 变更。

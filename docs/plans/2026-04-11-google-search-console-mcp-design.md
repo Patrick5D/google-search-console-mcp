@@ -1,3 +1,5 @@
+> Historical design document. For current installation and supported behavior, see [README](../../README.md). Paths are illustrative.
+
 # Google Search Console MCP Design
 
 > **Historical Note:** 本文仍是项目骨架、认证、快照与模块边界设计来源；但从 `2026-04-12-gsc-agent-query-commands-design.md` 获批起，agent 查询命令面不再以本文第 4 节工具清单为准。

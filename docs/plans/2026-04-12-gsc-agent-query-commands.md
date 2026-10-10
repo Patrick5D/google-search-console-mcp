@@ -1,3 +1,5 @@
+> Historical design document. For current installation and supported behavior, see [README](../../README.md). Paths are illustrative.
+
 # GSC Agent Query Commands Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

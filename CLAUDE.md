@@ -1,5 +1,9 @@
 # google-search-console-mcp - 面向多站点的 Google Search Console MCP 读取与分析层
-Python 3.12 + FastMCP/MCP SDK + Google APIs OAuth + Search Console API + CSV snapshots + pytest
+Python 3.12 + FastMCP/MCP SDK 1.x + Google APIs OAuth + Search Console API + CSV snapshots + pytest
+
+<directory>
+.github/ - 持续集成目录，验证测试、HTTP 与构建 (1子目录: workflows)
+</directory>
 
 <directory>
 config/ - 认证与运行配置目录，承载 OAuth client、token 与服务配置说明 (0子目录)
@@ -26,11 +30,11 @@ CLAUDE.md - 项目 L1 宪法，定义目录骨架、技术栈与模块边界
 </config>
 
 <config>
-.env.example - 本地环境变量模板，声明 OAuth 与配置路径入口
+.env.example - 配置迁移说明，指向 YAML 与 CLI 参数
 </config>
 
 <config>
-pyproject.toml - Python 项目元数据与依赖定义，提供 uv/pytest 运行基础
+pyproject.toml - 包元数据与 SDK 1.x 依赖边界，声明 README、MIT 与测试依赖
 </config>
 
 法则: 极简·稳定·导航·版本精确
@@ -38,3 +42,13 @@ pyproject.toml - Python 项目元数据与依赖定义，提供 uv/pytest 运行
 接口约定：Search Analytics 工具返回 rows/meta。分析工具返回 items/meta。
 数据约定：日期采用 PT，CTR 采用比例。缺失行不等于零。
 运行边界：默认绑定本机，只读 Google 数据；快照显式写入本地。
+
+<config>
+README.md - 英文安装、授权、连接与工具使用入口
+LICENSE - MIT 使用与分发许可
+CONTRIBUTING.md - 开发、测试、文档与贡献约定
+</config>
+
+<config>
+MANIFEST.in - 源码包白名单，包含安装示例、测试与公开协议文档
+</config>

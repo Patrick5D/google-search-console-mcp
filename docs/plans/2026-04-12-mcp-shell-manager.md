@@ -1,3 +1,5 @@
+> Historical design document. For current installation and supported behavior, see [README](../../README.md). Paths are illustrative.
+
 # MCP Shell Manager Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
@@ -11,15 +13,15 @@
 ### Task 1: Create manager config directory and shell entrypoint
 
 **Files:**
-- Create: `/Users/celeste/.config/mcp-manager/CLAUDE.md`
-- Create: `/Users/celeste/.config/mcp-manager/mcp.sh`
+- Create: `~/.config/mcp-manager/CLAUDE.md`
+- Create: `~/.config/mcp-manager/mcp.sh`
 
 **Step 1: Write the failing verification**
 
 Run:
 
 ```bash
-test -f /Users/celeste/.config/mcp-manager/mcp.sh
+test -f ~/.config/mcp-manager/mcp.sh
 ```
 
 Expected: FAIL because the file does not exist yet.
@@ -35,7 +37,7 @@ Create:
 Run:
 
 ```bash
-zsh -lc 'source /Users/celeste/.config/mcp-manager/mcp.sh && whence -w mcp'
+zsh -lc 'source ~/.config/mcp-manager/mcp.sh && whence -w mcp'
 ```
 
 Expected: output shows `mcp: function`
@@ -47,7 +49,7 @@ This task modifies home-directory config outside the repo; no git commit applies
 ### Task 2: Wire zsh startup to load the manager
 
 **Files:**
-- Modify: `/Users/celeste/.zshrc`
+- Modify: `~/.zshrc`
 
 **Step 1: Write the failing verification**
 
@@ -84,7 +86,7 @@ This task modifies home-directory config outside the repo; no git commit applies
 ### Task 3: Validate service lifecycle commands
 
 **Files:**
-- Modify: `/Users/celeste/.config/mcp-manager/mcp.sh`
+- Modify: `~/.config/mcp-manager/mcp.sh`
 
 **Step 1: Write the failing verification**
 
@@ -140,7 +142,7 @@ zsh -lc 'source ~/.config/mcp-manager/mcp.sh && mcp ads stop'
 Run:
 
 ```bash
-sed -n '1,200p' /Users/celeste/Documents/GitHub/google-search-console-mcp/docs/plans/CLAUDE.md
+sed -n '1,200p' /path/to/google-search-console-mcp/docs/plans/CLAUDE.md
 ```
 
 Expected: the new design and plan files are listed.

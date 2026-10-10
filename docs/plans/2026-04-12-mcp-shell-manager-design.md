@@ -1,3 +1,5 @@
+> Historical design document. For current installation and supported behavior, see [README](../../README.md). Paths are illustrative.
+
 # MCP Shell Manager Design
 
 **目标**
@@ -56,12 +58,12 @@ mcp <service> <action>
 ### 3.1 服务
 
 - `gsc`
-  - project dir: `/Users/celeste/Documents/GitHub/google-search-console-mcp`
+  - project dir: `/path/to/google-search-console-mcp`
   - session: `mcp-gsc`
   - run cmd: `uv run python -m google_search_console_mcp.server`
 
 - `ads`
-  - project dir: `/Users/celeste/Documents/GitHub/google-ads-mcp`
+  - project dir: `/path/to/google-ads-mcp`
   - session: `mcp-ads`
   - run cmd: `uv run python -m google_ads_mcp.server`
 

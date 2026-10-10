@@ -7,6 +7,10 @@ __pycache__/
 *.egg-info/
 config/oauth_client.json
 config/token.json
+config/*.local.yaml
 /logs/
 /snapshots/
 uv.lock
+
+/build/
+/dist/

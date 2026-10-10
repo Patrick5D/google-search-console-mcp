@@ -1,5 +1,5 @@
 # snapshots/
-> L2 | 父级: /Users/celeste/Documents/GitHub/google-search-console-mcp/src/google_search_console_mcp/CLAUDE.md
+> L2 | 父级: ../CLAUDE.md
 
 成员清单
 CLAUDE.md: 快照层地图，约束 CSV 快照只保存 site/day 事实

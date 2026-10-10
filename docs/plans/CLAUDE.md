@@ -1,5 +1,5 @@
 # plans/
-> L2 | 父级: /Users/celeste/Documents/GitHub/google-search-console-mcp/docs/CLAUDE.md
+> L2 | 父级: ../CLAUDE.md
 
 成员清单
 CLAUDE.md: 计划目录地图，约束设计稿与实现计划的命名和用途

@@ -1,5 +1,5 @@
 # google_search_console_mcp/
-> L2 | 父级: /Users/celeste/Documents/GitHub/google-search-console-mcp/src/CLAUDE.md
+> L2 | 父级: ../CLAUDE.md
 
 成员清单
 CLAUDE.md: 主包地图，约束配置、认证、server、GSC API、快照与工具层的职责边界
